@@ -1,0 +1,87 @@
+<div class="flex flex-col h-full bg-[#f8fafc] p-8 overflow-hidden">
+  <div class="flex items-center gap-4 mb-8">
+    <button (click)="retour()" class="p-2 bg-white rounded-xl shadow-sm text-gray-400 hover:text-indigo-600 transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <h1 class="text-2xl font-bold text-gray-800">Paramètres du compte</h1>
+  </div>
+
+  <div class="flex-1 overflow-y-auto custom-scrollbar">
+    <div class="max-w-2xl mx-auto bg-white rounded-[2.5rem] p-10 shadow-sm border border-gray-100">
+      
+      <!-- Photo de profil -->
+      <div class="flex flex-col items-center mb-10">
+        <div class="relative group">
+          <div class="w-32 h-32 rounded-3xl bg-indigo-50 flex items-center justify-center overflow-hidden border-4 border-white shadow-lg">
+            <img [src]="moi()?.photo ? (moi().photo.startsWith('http') ? moi().photo : baseMedia + moi().photo) : 'https://i.pravatar.cc/300?u=' + moi()?.username" 
+                 alt="avatar" class="w-full h-full object-cover" />
+          </div>
+          <label class="absolute -bottom-2 -right-2 w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center cursor-pointer hover:bg-indigo-700 transition-all shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <input type="file" (change)="surFichierSelectionne($event)" class="hidden" accept="image/*" />
+          </label>
+        </div>
+        <h3 class="mt-4 font-bold text-gray-800 text-lg">{{ moi()?.prenom }} {{ moi()?.nom }}</h3>
+        <p class="text-sm text-gray-400">@{{ moi()?.username }}</p>
+      </div>
+
+      <form (ngSubmit)="enregistrer()" class="space-y-6">
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Prénom</label>
+            <input type="text" [(ngModel)]="formulaire().prenom" name="prenom" required class="w-full bg-[#f8fafc] border-none rounded-2xl p-4 text-sm focus:ring-2 focus:ring-indigo-500" placeholder="Votre prénom" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Nom</label>
+            <input type="text" [(ngModel)]="formulaire().nom" name="nom" required class="w-full bg-[#f8fafc] border-none rounded-2xl p-4 text-sm focus:ring-2 focus:ring-indigo-500" placeholder="Votre nom" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Email</label>
+          <input type="email" [(ngModel)]="formulaire().email" name="email" required class="w-full bg-[#f8fafc] border-none rounded-2xl p-4 text-sm focus:ring-2 focus:ring-indigo-500" placeholder="votre@email.com" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Nom d'utilisateur</label>
+          <input type="text" [value]="moi()?.username" disabled class="w-full bg-gray-50 border-none rounded-2xl p-4 text-sm text-gray-400 cursor-not-allowed" />
+          <p class="text-[10px] text-gray-400 mt-1 ml-1">Le nom d'utilisateur ne peut pas être modifié.</p>
+        </div>
+
+        <div class="pt-6 border-t border-gray-100">
+          <h3 class="font-bold text-gray-800 mb-4">Changer de mot de passe</h3>
+          <div class="grid grid-cols-2 gap-6">
+            <div>
+              <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Nouveau mot de passe</label>
+              <input type="password" [(ngModel)]="formulaire().nouveau_mot_de_passe" name="nouveau_mot_de_passe" required class="w-full bg-[#f8fafc] border-none rounded-2xl p-4 text-sm focus:ring-2 focus:ring-indigo-500" placeholder="••••••••" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Confirmer</label>
+              <input type="password" [(ngModel)]="formulaire().confirmer_mot_de_passe" name="confirmer_mot_de_passe" required class="w-full bg-[#f8fafc] border-none rounded-2xl p-4 text-sm focus:ring-2 focus:ring-indigo-500" placeholder="••••••••" />
+            </div>
+          </div>
+          <p class="text-[10px] text-gray-400 mt-2 ml-1">Laissez vide si vous ne souhaitez pas changer votre mot de passe.</p>
+        </div>
+
+        <!-- Messages de statut -->
+        <div *ngIf="succes()" class="p-4 bg-green-50 text-green-700 rounded-2xl text-sm font-medium flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Profil mis à jour avec succès !
+        </div>
+        <div *ngIf="erreur()" class="p-4 bg-red-50 text-red-700 rounded-2xl text-sm font-medium flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+          {{ erreur() }}
+        </div>
+
+        <div class="flex gap-4 pt-6">
+          <button type="submit" [disabled]="chargement()" class="flex-1 bg-indigo-600 text-white py-4 rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 disabled:opacity-50">
+            {{ chargement() ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+          </button>
+          <button type="button" (click)="retour()" class="flex-1 bg-gray-100 text-gray-600 py-4 rounded-2xl font-bold hover:bg-gray-200 transition-all">
+            Annuler
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Atelier Pocket — Mini portfolio</title>
+
+  <!-- Google Font (optionnel) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0f1724;
+      --card: #0b1220;
+      --muted: #9aa4b2;
+      --accent: #ffb86b;
+      --accent-2: #7ce7c9;
+      --glass: rgba(255, 255, 255, 0.04);
+      --radius: 14px;
+      --gap: 18px;
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:
+        radial-gradient(1000px 400px at 10% 10%, rgba(124, 58, 237, 0.09), transparent 6%),
+        radial-gradient(700px 300px at 90% 90%, rgba(14, 165, 233, 0.04), transparent 6%),
+        var(--bg);
+      color: #e6eef6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--gap);
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 26px;
+      align-items: start;
+    }
+
+    /* Card / left column */
+    .card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+      backdrop-filter: blur(6px);
+    }
+
+    header.site-head {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #081018;
+      font-size: 20px;
+      box-shadow: 0 6px 18px rgba(124, 58, 237, 0.12);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.05;
+      letter-spacing: -0.2px;
+    }
+
+    p.lead {
+      margin: 10px 0 18px 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .hero {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .hero .preview {
+      flex: 1;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      padding: 18px;
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .device {
+      width: 160px;
+      height: 110px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #071022 0%, #0b1726 100%);
+      box-shadow: inset 0 2px 8px rgba(255, 255, 255, 0.02), 0 8px 30px rgba(2, 6, 23, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-2);
+      font-weight: 700;
+    }
+
+    /* Features */
+    .features {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .feature {
+      background: var(--glass);
+      border-radius: 12px;
+      padding: 12px;
+      min-height: 70px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      transition: transform .22s ease, box-shadow .22s ease;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .feature:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 40px rgba(2, 6, 23, 0.6);
+    }
+
+    .feature strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .feature small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* Right column - profile */
+    .profile {
+      position: relative;
+      padding: 20px;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.01));
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.55);
+    }
+
+    .avatar {
+      width: 76px;
+      height: 76px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, var(--accent-2), var(--accent));
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #052622;
+      font-size: 26px;
+    }
+
+    .meta {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .meta h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .meta p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .stat {
+      background: rgba(255, 255, 255, 0.02);
+      padding: 10px;
+      border-radius: 10px;
+      flex: 1;
+      text-align: center;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 18px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color: #071018;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.12);
+    }
+
+    /* simple contact form */
+    form.contact {
+      margin-top: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      background: transparent;
+      color: inherit;
+      resize: vertical;
+      min-height: 40px;
+    }
+
+    textarea {
+      min-height: 80px;
+      padding-top: 12px;
+    }
+
+    footer.note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    /* Responsive */
+    @media (max-width:960px) {
+      .container {
+        grid-template-columns: 1fr;
+        padding: 0 10px;
+      }
+
+      body {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <!-- Left / main card -->
+    <section class="card" aria-labelledby="site-title">
+      <header class="site-head">
+        <div class="logo">PK</div>
+        <div>
+          <h1 id="site-title">Atelier Pocket — Mini-portfolio</h1>
+          <p class="lead">Un petit espace pour présenter tes projets, idées ou créations. Simple, réactif et facile à
+            personnaliser.</p>
+        </div>
+      </header>
+
+      <div class="hero">
+        <div class="preview" aria-hidden="true">
+          <div class="device">Projet A</div>
+        </div>
+
+        <aside style="width:220px;">
+          <div
+            style="background:var(--glass); padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.03);">
+            <strong>Statut</strong>
+            <p style="margin:6px 0 0;color:var(--muted)">Prototype — en cours</p>
+            <div style="margin-top:10px;">
+              <a class="btn" href="#">Voir</a>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="features" aria-label="Fonctionnalités">
+        <div class="feature">
+          <div>
+            <strong>Design moderne</strong>
+            <small>Cartes, ombres douces et typographie propre.</small>
+          </div>
+        </div>
+
+        <div class="feature">
+          <div>
+            <strong>Responsive</strong>
+            <small>S'adapte aux écrans mobiles et desktop.</small>
+          </div>
+        </div>
+
+        <div class="feature">
+          <div>
+            <strong>Personnalisable</strong>
+            <small>Couleurs et contenu faciles à modifier.</small>
+          </div>
+        </div>
+
+        <div class="feature">
+          <div>
+            <strong>Léger</strong>
+            <small>HTML+CSS, pas de dépendances lourdes.</small>
+          </div>
+        </div>
+      </div>
+
+      <footer class="note">Astuce : tu peux remplacer "Projet A" par une image ou une animation SVG.</footer>
+    </section>
+
+    <!-- Right / profile & contact -->
+    <aside class="profile" aria-labelledby="profile-title">
+      <div class="meta">
+        <div class="avatar">AG</div>
+        <div>
+          <h3 id="profile-title">AG Blogba</h3>
+          <p>Créateur, développeur & designer</p>
+        </div>
+      </div>
+
+      <div class="stats" aria-hidden="true">
+        <div class="stat"><b>12</b><small>Projets</small></div>
+        <div class="stat"><b>3</b><small>En cours</small></div>
+        <div class="stat"><b>5</b><small>Clients</small></div>
+      </div>
+
+      <a class="btn" href="#">Télécharger CV</a>
+
+      <form class="contact" onsubmit="event.preventDefault(); alert('Merci ! (formulaire factice)')">
+        <input type="text" placeholder="Ton nom" aria-label="Nom" required>
+        <input type="email" placeholder="Ton email" aria-label="Email" required>
+        <textarea placeholder="Message rapide..." aria-label="Message"></textarea>
+        <button type="submit" class="btn" style="width:100%; margin-top:6px;">Envoyer</button>
+      </form>
+
+      <div style="margin-top:12px; color:var(--muted); font-size:13px;">
+        <strong>Contact rapide</strong>
+        <p style="margin:6px 0 0">hello@atelier-pocket.example</p>
+      </div>
+    </aside>
+  </div>
+  <p>Nous sommesw au cours de  methode agiles .</p>
+</body>
+
+</html>

@@ -1,0 +1,68 @@
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
+}
+
+/* Animations */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.flex-shrink-0 {
+  animation: slideIn 0.4s ease-out forwards;
+}
+
+/* Modal backdrop blur */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+}
+
+/* Drag and drop feedback */
+.cursor-grab {
+  cursor: grab;
+}
+
+.cursor-grabbing {
+  cursor: grabbing;
+}
+
+/* Card glass effect on hover */
+.group:hover {
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+/* Status colors classes for ngClass */
+.border-blue-400 { border-color: #60a5fa; }
+.border-orange-400 { border-color: #fb923c; }
+.border-red-400 { border-color: #f87171; }
+.border-green-400 { border-color: #4ade80; }
+
+.bg-blue-50 { background-color: #eff6ff; }
+.bg-orange-50 { background-color: #fff7ed; }
+.bg-red-50 { background-color: #fef2f2; }
+.bg-green-50 { background-color: #f0fdf4; }
+
+.text-blue-500 { color: #3b82f6; }
+.text-orange-500 { color: #f97316; }
+.text-red-500 { color: #ef4444; }
+.text-green-500 { color: #22c55e; }
+
+.bg-blue-400 { background-color: #60a5fa; }
+.bg-orange-400 { background-color: #fb923c; }
+.bg-red-400 { background-color: #f87171; }
+.bg-green-400 { background-color: #4ade80; }

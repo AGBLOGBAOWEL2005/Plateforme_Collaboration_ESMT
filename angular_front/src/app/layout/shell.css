@@ -1,0 +1,32 @@
+@reference "tailwindcss";
+
+.sidebar {
+  width: 80px;
+  transition: all 0.3s ease;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-icon-link {
+  @apply flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-200 text-white/60;
+  cursor: pointer;
+}
+
+.sidebar-icon-link:hover {
+  @apply bg-white/10 text-white;
+  transform: translateY(-2px);
+}
+
+.sidebar-icon-link.active {
+  @apply bg-white/15 text-white shadow-lg shadow-indigo-500/20;
+  border-left: 2px solid #a78bfa;
+  border-radius: 12px;
+}
+
+.logo-container {
+  @apply transition-transform duration-300;
+}
+
+.logo-container:hover {
+  transform: rotate(10deg) scale(1.1);
+}

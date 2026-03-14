@@ -1,0 +1,273 @@
+<div class="flex flex-col h-full bg-[#f8fafc] p-8 overflow-y-auto custom-scrollbar">
+  <div class="flex items-center justify-between mb-10">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Administration</h1>
+      <p class="text-gray-500 mt-1">Gérez les utilisateurs de la plateforme.</p>
+    </div>
+    <div class="p-4 bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-100 flex items-center gap-3">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+      <span class="font-bold">Mode Administrateur</span>
+    </div>
+  </div>
+
+  <!-- Navigation par onglets -->
+  <div class="flex gap-4 mb-8 bg-white p-2 rounded-2xl shadow-sm border border-gray-100 w-fit">
+    <button (click)="changerOnglet('utilisateurs')" 
+            [class.bg-indigo-600]="ongletActif() === 'utilisateurs'" [class.text-white]="ongletActif() === 'utilisateurs'"
+            class="px-6 py-2.5 rounded-xl font-bold text-sm transition-all hover:bg-indigo-50 hover:text-indigo-600" [class.hover:bg-indigo-600]="ongletActif() === 'utilisateurs'" [class.hover:text-white]="ongletActif() === 'utilisateurs'">
+      Utilisateurs
+    </button>
+    <button (click)="changerOnglet('evaluations')" 
+            [class.bg-indigo-600]="ongletActif() === 'evaluations'" [class.text-white]="ongletActif() === 'evaluations'"
+            class="px-6 py-2.5 rounded-xl font-bold text-sm transition-all hover:bg-indigo-50 hover:text-indigo-600" [class.hover:bg-indigo-600]="ongletActif() === 'evaluations'" [class.hover:text-white]="ongletActif() === 'evaluations'">
+      Évaluations & Primes
+    </button>
+  </div>
+
+  <!-- Contenu des onglets -->
+  <div class="bg-white rounded-[2.5rem] p-10 shadow-sm border border-gray-100">
+    
+    <div *ngIf="chargement()" class="flex flex-col items-center justify-center py-20 gap-4">
+      <div class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">Chargement des données...</p>
+    </div>
+
+    <!-- Liste Utilisateurs -->
+    <div *ngIf="ongletActif() === 'utilisateurs' && !chargement()" class="space-y-4">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div class="flex items-center gap-4 flex-1">
+          <h2 class="text-xl font-bold text-gray-800 shrink-0">Liste des Utilisateurs ({{ utilisateurs().length }})</h2>
+          
+          <!-- Barre de recherche utilisateur -->
+          <div class="flex items-center bg-gray-50 rounded-2xl px-4 py-2 w-full max-w-md shadow-sm border border-gray-100 focus-within:ring-2 focus-within:ring-indigo-500/20 transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400 mr-2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" placeholder="Rechercher un utilisateur (nom, email, username)..." 
+                   class="bg-transparent border-none outline-none text-sm w-full" 
+                   [ngModel]="rechercheUtilisateur()" (ngModelChange)="rechercheUtilisateur.set($event)" />
+          </div>
+        </div>
+        <button (click)="ouvrirModalUtilisateur()" class="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-100 transition-all">+ Nouvel Utilisateur</button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead>
+            <tr class="text-gray-400 text-[10px] font-bold uppercase tracking-widest border-b border-gray-100">
+              <th class="pb-4 pl-4">Avatar</th>
+              <th class="pb-4">Nom Complet</th>
+              <th class="pb-4">Nom d'utilisateur</th>
+              <th class="pb-4">Rôle</th>
+              <th class="pb-4 text-right pr-4">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+            <tr *ngFor="let u of utilisateursFiltres()" class="group hover:bg-gray-50 transition-colors">
+              <td class="py-4 pl-4">
+                <img [src]="u.photo ? (u.photo.startsWith('http') ? u.photo : baseMedia + u.photo) : 'https://i.pravatar.cc/100?u=' + u.id" 
+                     class="w-10 h-10 rounded-xl object-cover shadow-sm" alt="avatar" />
+              </td>
+              <td class="py-4 font-bold text-gray-800">{{ u.prenom }} {{ u.nom }}</td>
+              <td class="py-4 text-sm text-gray-500">@{{ u.username }}</td>
+              <td class="py-4">
+                <span class="px-3 py-1 rounded-full text-[10px] font-bold" 
+                      [ngClass]="{
+                        'bg-indigo-50 text-indigo-600': u.role === 'ADMIN',
+                        'bg-orange-50 text-orange-600': u.role === 'PROFESSEUR',
+                        'bg-blue-50 text-blue-600': u.role === 'ETUDIANT'
+                      }">{{ u.role }}</span>
+              </td>
+              <td class="py-4 text-right pr-4">
+                <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button (click)="ouvrirModalUtilisateur(u)" class="p-2 bg-white rounded-lg shadow-sm text-blue-400 hover:text-blue-600 border border-gray-100"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                  <button (click)="supprimerUtilisateur(u.id)" class="p-2 bg-white rounded-lg shadow-sm text-red-400 hover:text-red-600 border border-gray-100"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg></button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Évaluations & Primes Enseignants -->
+    <div *ngIf="ongletActif() === 'evaluations' && !chargement()" class="space-y-10">
+      
+      <!-- Vue d'ensemble des Trimestres (Image 2) -->
+      <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center text-white font-bold">5</div>
+          <h2 class="text-2xl font-bold text-gray-800">Statistiques trimestrielles</h2>
+        </div>
+        <p class="text-sm text-gray-500 mb-8">Un trimestre :</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="text-gray-400 text-xs font-bold border-b border-gray-50">
+                <th class="pb-4">Trimestre</th>
+                <th class="pb-4">Période</th>
+                <th class="pb-4 text-right">Sélectionner</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+              <tr *ngFor="let t of ['T1', 'T2', 'T3', 'T4']" 
+                  (click)="selectionnerTrimestre(t)"
+                  class="group hover:bg-gray-50 cursor-pointer transition-all">
+                <td class="py-4 font-bold text-gray-700">{{ t }}</td>
+                <td class="py-4 text-sm text-gray-500">
+                  {{ t === 'T1' ? 'Jan – Mars' : t === 'T2' ? 'Avr – Juin' : t === 'T3' ? 'Juil – Sep' : 'Oct – Déc' }}
+                </td>
+                <td class="py-4 text-right">
+                  <div class="inline-flex items-center justify-center w-8 h-8 rounded-lg transition-all"
+                       [class.bg-indigo-600]="trimestreSelectionne() === t && filtrePeriode() === 'trimestre'"
+                       [class.text-white]="trimestreSelectionne() === t && filtrePeriode() === 'trimestre'"
+                       [class.bg-gray-100]="trimestreSelectionne() !== t || filtrePeriode() !== 'trimestre'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                </td>
+              </tr>
+              <tr (click)="selectionnerAnnee()" 
+                  class="group hover:bg-gray-50 cursor-pointer transition-all">
+                <td class="py-4 font-bold text-gray-700">Annuel</td>
+                <td class="py-4 text-sm text-gray-500">Jan – Déc ({{ anneeSelectionnee() }})</td>
+                <td class="py-4 text-right">
+                  <div class="inline-flex items-center justify-center w-8 h-8 rounded-lg transition-all"
+                       [class.bg-indigo-600]="filtrePeriode() === 'annee'"
+                       [class.text-white]="filtrePeriode() === 'annee'"
+                       [class.bg-gray-100]="filtrePeriode() !== 'annee'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tableau d'Évaluation (Image 1) -->
+      <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+        <h2 class="text-xl font-bold text-gray-800 mb-8">Tableau d'Évaluation ({{ filtrePeriode() === 'trimestre' ? trimestreSelectionne() : 'Annuel' }})</h2>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="text-gray-800 text-sm font-bold border-b border-gray-100">
+                <th class="pb-6">Enseignant</th>
+                <th class="pb-6">Tâches</th>
+                <th class="pb-6">Dans délai</th>
+                <th class="pb-6">%</th>
+                <th class="pb-6 text-right">Prime</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+              <tr *ngFor="let e of evaluationsEnseignants()" class="group hover:bg-gray-50/50 transition-all">
+                <td class="py-6">
+                  <div class="flex items-center gap-4">
+                    <img [src]="e.photo ? (e.photo.startsWith('http') ? e.photo : baseMedia + e.photo) : 'https://i.pravatar.cc/100?u=' + e.id" 
+                         class="w-10 h-10 rounded-xl object-cover shadow-sm" alt="avatar" />
+                    <div>
+                      <p class="font-bold text-gray-800">{{ e.prenom }} {{ e.nom }}</p>
+                      <p class="text-[10px] text-gray-400 font-medium uppercase tracking-widest">@{{ e.username }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-6 text-gray-600 font-medium">{{ e.total_taches }}</td>
+                <td class="py-6 text-gray-600 font-medium">{{ e.dans_delai }}</td>
+                <td class="py-6">
+                  <span class="font-bold" [ngClass]="e.pourcentage >= 90 ? 'text-green-500' : 'text-gray-600'">
+                    {{ e.pourcentage }}%
+                  </span>
+                </td>
+                <td class="py-6 text-right">
+                  <span class="px-4 py-2 rounded-xl text-sm font-black" 
+                        [ngClass]="{
+                          'bg-green-100 text-green-700': e.prime >= 100000,
+                          'bg-blue-100 text-blue-700': e.prime === 30000,
+                          'bg-gray-100 text-gray-400': e.prime === 0
+                        }">
+                    {{ e.prime > 0 ? (e.prime / 1000) + 'K' : '0' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <div *ngIf="evaluationsEnseignants().length === 0" class="text-center py-20 text-gray-400 italic">
+            Aucun enseignant évalué pour cette période.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal CRUD Utilisateur -->
+<div *ngIf="afficherModalUtilisateur()" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-[2.5rem] w-full max-w-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+    <div class="p-8 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+      <div>
+        <h3 class="text-2xl font-bold text-gray-900">{{ modeEditionUtilisateur() ? 'Modifier' : 'Ajouter' }} un Utilisateur</h3>
+        <p class="text-gray-500 text-sm mt-1">Remplissez les informations ci-dessous.</p>
+      </div>
+      <button (click)="fermerModalUtilisateur()" class="p-2 hover:bg-white rounded-xl transition-colors text-gray-400 hover:text-gray-600">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+
+    <form (submit)="enregistrerUtilisateur()" class="p-8 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+      <div class="grid grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <label class="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Prénom</label>
+          <input type="text" name="prenom" [(ngModel)]="formUtilisateur.prenom" required
+                 class="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-100 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none text-gray-800 font-medium">
+        </div>
+        <div class="space-y-2">
+          <label class="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Nom</label>
+          <input type="text" name="nom" [(ngModel)]="formUtilisateur.nom" required
+                 class="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-100 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none text-gray-800 font-medium">
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Nom d'utilisateur</label>
+        <input type="text" name="username" [(ngModel)]="formUtilisateur.username" required
+               class="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-100 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none text-gray-800 font-medium">
+      </div>
+
+      <div class="space-y-2">
+        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Email</label>
+        <input type="email" name="email" [(ngModel)]="formUtilisateur.email" required
+               class="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-100 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none text-gray-800 font-medium">
+      </div>
+
+      <div class="space-y-2">
+        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Rôle</label>
+        <select name="role" [(ngModel)]="formUtilisateur.role" required
+                class="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-100 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none text-gray-800 font-medium appearance-none">
+          <option value="ETUDIANT">Etudiant</option>
+          <option value="PROFESSEUR">Professeur</option>
+          <option value="ADMIN">Administrateur</option>
+        </select>
+      </div>
+
+      <div class="space-y-2">
+        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">
+          Mot de passe {{ modeEditionUtilisateur() ? '(laisser vide pour ne pas changer)' : '' }}
+        </label>
+        <input type="password" name="password" [(ngModel)]="formUtilisateur.password" [required]="!modeEditionUtilisateur()"
+               class="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-100 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none text-gray-800 font-medium">
+      </div>
+
+      <div class="pt-4 flex gap-4">
+        <button type="button" (click)="fermerModalUtilisateur()"
+                class="flex-1 px-8 py-4 rounded-2xl font-bold text-gray-500 hover:bg-gray-100 transition-all">
+          Annuler
+        </button>
+        <button type="submit" [disabled]="chargement()"
+                class="flex-1 px-8 py-4 bg-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all disabled:opacity-50">
+          {{ chargement() ? 'Enregistrement...' : 'Enregistrer' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

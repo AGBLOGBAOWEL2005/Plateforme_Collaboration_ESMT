@@ -1,0 +1,52 @@
+/* Custom Scrollbar for the project board */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.group {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Modal backdrop blur */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+}
+
+/* Input focus styles for the modal */
+input:focus, textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* Card glass effect on hover */
+.group:hover {
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+/* Project Status Badges */
+.bg-indigo-50 {
+  background-color: #f5f3ff;
+}
+
+.text-indigo-600 {
+  color: #4f46e5;
+}

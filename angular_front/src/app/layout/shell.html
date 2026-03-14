@@ -1,0 +1,48 @@
+<div class="min-h-screen flex">
+  <!-- Sidebar étroite avec icônes -->
+  <aside class="sidebar bg-[#1f1846] text-white flex flex-col items-center py-6">
+    <div class="logo-container mb-12">
+      <div class="w-10 h-10 bg-gradient-to-tr from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center font-bold text-xl shadow-lg">C</div>
+    </div>
+
+    <nav class="flex-1 flex flex-col gap-6 items-center w-full px-2">
+      <!-- Dashboard -->
+      <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" 
+         class="sidebar-icon-link" title="Dashboard">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-dashboard"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+      </a>
+
+      <!-- Projets -->
+      <a routerLink="/projets" routerLinkActive="active" class="sidebar-icon-link" title="Projets">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder-kanban"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/><path d="M8 10v4"/><path d="M12 10v2"/><path d="M16 10v6"/></svg>
+      </a>
+
+      <!-- Messagerie -->
+      <a routerLink="/messagerie" routerLinkActive="active" class="sidebar-icon-link" title="Messagerie">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </a>
+
+      <!-- Notification -->
+      <a routerLink="/notifications" routerLinkActive="active" class="sidebar-icon-link relative" title="Notifications">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <span *ngIf="nombreNonLus() > 0" class="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-red-500 rounded-full flex items-center justify-center text-[10px] font-bold text-white px-1 border-2 border-[#1f1846]">
+          {{ nombreNonLus() > 9 ? '9+' : nombreNonLus() }}
+        </span>
+      </a>
+
+      <!-- Admin -->
+      <a *ngIf="moi()?.role === 'ADMIN'" routerLink="/admin" routerLinkActive="active" class="sidebar-icon-link text-yellow-400" title="Administration">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+      </a>
+    </nav>
+
+    <!-- Déconnexion en bas -->
+    <button (click)="deconnexion()" class="sidebar-icon-link mt-auto text-red-400 hover:text-red-300 hover:bg-red-400/10" title="Se déconnecter">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+    </button>
+  </aside>
+
+  <main class="flex-1 bg-[#f8fafc] overflow-auto">
+    <router-outlet></router-outlet>
+  </main>
+</div>
