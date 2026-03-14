@@ -1,6 +1,6 @@
 # Rapport du projet
 
-Retenez également que le frontend angular est le dossier au nom angular_front
+
 
 Ce document décrit **comment configurer et lancer le projet** (backend Django + frontend Angular) et fournit une **vue d'ensemble des modèles de données** et des **routes API disponibles**.
 
